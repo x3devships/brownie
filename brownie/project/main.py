@@ -484,10 +484,24 @@ class Project(_ProjectBase):
 
 class TempProject(_ProjectBase):
 
-    """Simplified Project class used to hold temporary contracts that are
-    compiled via project.compile_source"""
+    """
+    Simplified Project class for projects that only exist in memory
+    """
 
     def __init__(self, name: str, contract_sources: Dict, compiler_config: Dict) -> None:
+        """
+        Create a `TempProject` from one or more contract sources.
+
+        Arguments
+        ---------
+        name : str
+            The name of the project
+        contract_sources : dict
+            Dictionary of `{'contract name': "source code"}`
+        compiler_config : dict
+            Compiler configuration settings. Uses the same structure as the Brownie
+            configuration file.
+        """
         self._path = None
         self._build_path = None
         self._name = name
@@ -498,6 +512,22 @@ class TempProject(_ProjectBase):
 
     @classmethod
     def from_compiler_json(cls, name: str, input_json: Dict, output_json: Dict) -> "TempProject":
+        """
+        Create a `TempProject` from the compiler standard JSON input/output.
+
+        Arguments
+        ---------
+        name : str
+            The name of the project
+        input_json : dict
+            Compiler standard JSON input
+        output_json : dict
+            Compiler standard JSON output
+
+        Returns
+        -------
+        TempProject instance
+        """
         self = cls.__new__(cls)
 
         self._path = None
