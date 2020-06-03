@@ -496,6 +496,24 @@ class TempProject(_ProjectBase):
         self._compile(contract_sources, compiler_config, True)
         self._create_containers()
 
+    @classmethod
+    def from_compiler_json(cls, name: str, input_json: Dict, output_json: Dict) -> "TempProject":
+        self = cls.__new__(cls)
+
+        self._path = None
+        self._build_path = None
+        self._name = name
+
+        build_json = compiler.generate_build_json(input_json, output_json)
+        self._sources = Sources({k: v["content"] for k, v in input_json["sources"].items()}, {})
+        self._build = Build(self._sources)
+
+        for data in build_json.values():
+            self._build._add(data)
+        self._create_containers()
+
+        return self
+
     def __repr__(self) -> str:
         return f"<TempProject '{self._name}'>"
 
