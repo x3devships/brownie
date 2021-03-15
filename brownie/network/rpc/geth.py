@@ -38,7 +38,7 @@ def launch(cmd: str, **kwargs: Dict) -> None:
     return psutil.Popen([cmd], stdin=DEVNULL, stdout=out, stderr=out)
 
 
-def on_connection():
+def on_connection() -> None:
     if geth_poa_middleware not in web3._custom_middleware:
         web3._custom_middleware.add(geth_poa_middleware)
         web3.middleware_onion.inject(geth_poa_middleware, layer=0)
