@@ -6,6 +6,7 @@ from typing import Dict, List, Optional
 
 import psutil
 from requests.exceptions import ConnectionError as RequestsConnectionError
+from web3.middleware import geth_poa_middleware
 
 from brownie.exceptions import RPCRequestError
 from brownie.network.web3 import web3
@@ -37,6 +38,12 @@ def launch(cmd: str, **kwargs: Dict) -> None:
     return psutil.Popen([cmd], stdin=DEVNULL, stdout=out, stderr=out)
 
 
+def on_connection():
+    if geth_poa_middleware not in web3._custom_middleware:
+        web3._custom_middleware.add(geth_poa_middleware)
+        web3.middleware_onion.inject(geth_poa_middleware, layer=0)
+
+
 def _request(method: str, args: List) -> int:
     try:
         response = web3.provider.make_request(method, args)  # type: ignore
@@ -52,13 +59,12 @@ def sleep(seconds: int) -> None:
 
 
 def mine(timestamp: Optional[int] = None) -> None:
-    params = [timestamp] if timestamp else []
-    _request("evm_mine", params)
+    raise NotImplementedError("Geth dev does not support empty mining")
 
 
 def snapshot() -> int:
-    return web3.eth.blockNumber
+    raise NotImplementedError("Geth dev does not support snapshots or rewinds")
 
 
 def revert(snapshot_id):
-    _request("debug_setHead", [hex(snapshot_id)])
+    raise NotImplementedError("Geth dev does not support snapshots or rewinds")
