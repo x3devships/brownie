@@ -5,7 +5,7 @@ import yaml
 
 from brownie._config import _get_data_folder, _load_config
 from brownie.network import web3
-from brownie.network.rpc import _validate_cmd_settings
+from brownie.network.rpc.ganache import _validate_cmd_settings
 
 
 @pytest.fixture
