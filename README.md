@@ -80,11 +80,13 @@ This loosens the pins on all dependencies. You'll want to make sure you have you
 ### for development
 
 There are extra tools that are helpful when developing:
+Note that the cryptography wheel in requirements-dev.txt depends on [Rust](https://www.rust-lang.org/tools/install) being installed
 
 ```bash
 git clone https://github.com/eth-brownie/brownie.git
 cd brownie
 python3 -m venv venv
+./venv/bin/pip install --upgrade pip
 ./venv/bin/pip install wheel
 ./venv/bin/pip install -e . -r requirements-dev.txt
 ```
