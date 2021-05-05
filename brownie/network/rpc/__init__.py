@@ -62,6 +62,15 @@ class Rpc(metaclass=_Singleton):
             if getattr(self.process, "stderr", None) is not None:
                 self.process.stderr.close()
             self.kill(False)
+    
+    def log_stdout_from_backend(self):
+        while True:
+            out = self.process.stdout.readline()
+            if out == '' and self.process.poll() != None:
+                break
+            if out != '':
+                sys.stdout.write(out.decode('utf-8'))
+                sys.stdout.flush()
 
     def launch(self, cmd: str, **kwargs: Dict) -> None:
         if self.is_active():
@@ -87,10 +96,15 @@ class Rpc(metaclass=_Singleton):
                 return
             time.sleep(0.1)
             if isinstance(self.process, psutil.Popen):
-                self.process.poll()
+                self.backend_logging_thread = threading.Thread(target=self.log_stdout_from_backend)
+                self.backend_logging_thread.start()
             if not self.process.is_running():
+                print("process is running false")
+                self.backend_logging_thread._stop()
                 self.kill(False)
                 raise RPCProcessError(cmd, uri)
+        print("process will kill")
+        self.backend_logging_thread._stop()
         self.kill(False)
         raise RPCConnectionError(cmd, self.process, uri)
 
